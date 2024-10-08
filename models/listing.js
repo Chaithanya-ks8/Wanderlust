@@ -42,7 +42,7 @@ description:{
             ref: "Review",
         },
     ],
-    ownner:{
+    owner:{
         type: Schema.Types.ObjectId,
         ref: "User",
     },
