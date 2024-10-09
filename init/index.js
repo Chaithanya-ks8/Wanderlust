@@ -13,8 +13,8 @@ async function main(){
 }
 
 const initDB = async () => {
-    await listing.deleteMany({});//66d188da8a5fa05ea42627ff
-    initData.data = initData.data.map((obj) =>({...obj,owner:"66d188da8a5fa05ea42627ff"}) )
+    await listing.deleteMany({});//66fbbde4c166c805c66dbcf5
+    initData.data = initData.data.map((obj) =>({...obj,owner:"66fbbde4c166c805c66dbcf5"}) )
     await listing.insertMany(initData.data);
     console.log("initialized");
 };
