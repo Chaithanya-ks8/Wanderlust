@@ -55,9 +55,15 @@ const mongoose = require("mongoose");
 
 const validateObjectId = (req, res, next) => {
     const { id, reviewId } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id.trim()) || (reviewId && !mongoose.Types.ObjectId.isValid(reviewId.trim()))) {
+
+
+    const trimmedId = id ? id.trim() : null;
+    const trimmedReviewId = reviewId ? reviewId.trim() : null;
+
+   
+    if (!mongoose.Types.ObjectId.isValid(trimmedId) || (trimmedReviewId && !mongoose.Types.ObjectId.isValid(trimmedReviewId))) {
         req.flash("error", "Invalid review or listing ID");
-        return res.redirect(`/listings/${id}`);
+        return res.redirect(`/listings/${trimmedId}`);
     }
     next();
 };
@@ -67,13 +73,18 @@ router.post(
     isloggedIn,
     validateReview,
     wrapAsync(async (req, res) => {
-        let listing = await Listing.findById(req.params.id);
+        const { id } = req.params;
+        const trimmedId = id.trim();
+
+      
+        const listing = await Listing.findById(trimmedId);
         if (!listing) {
             req.flash("error", "Listing not found");
             return res.redirect("/listings");
         }
-        
-        let newReview = new Review(req.body.review);
+
+     
+        const newReview = new Review(req.body.review);
         newReview.author = req.user._id;
         listing.reviews.push(newReview);
 
@@ -85,26 +96,38 @@ router.post(
     })
 );
 
-router.delete("/:reviewId", isloggedIn, isReviewAuthor, validateObjectId, wrapAsync(async (req, res) => {
-    const { id, reviewId } = req.params;
 
-    let listing = await Listing.findById(id.trim());
-    if (!listing) {
-        req.flash("error", "Listing not found");
-        return res.redirect("/listings");
-    }
+router.delete(
+    "/:reviewId",
+    isloggedIn,
+    isReviewAuthor,
+    validateObjectId,
+    wrapAsync(async (req, res) => {
+        const { id, reviewId } = req.params;
+        const trimmedId = id.trim();
+        const trimmedReviewId = reviewId.trim();
 
-    let review = await Review.findById(reviewId.trim());
-    if (!review) {
-        req.flash("error", "Review not found");
-        return res.redirect(`/listings/${id}`);
-    }
 
-    await Listing.findByIdAndUpdate(id.trim(), { $pull: { reviews: reviewId.trim() } });
-    await Review.findByIdAndDelete(reviewId.trim());
+        const listing = await Listing.findById(trimmedId);
+        if (!listing) {
+            req.flash("error", "Listing not found");
+            return res.redirect("/listings");
+        }
 
-    req.flash("success", "Review deleted");
-    res.redirect(`/listings/${id}`);
-}));
+  
+        const review = await Review.findById(trimmedReviewId);
+        if (!review) {
+            req.flash("error", "Review not found");
+            return res.redirect(`/listings/${trimmedId}`);
+        }
+
+  
+        await Listing.findByIdAndUpdate(trimmedId, { $pull: { reviews: trimmedReviewId } });
+        await Review.findByIdAndDelete(trimmedReviewId);
+
+        req.flash("success", "Review deleted");
+        res.redirect(`/listings/${trimmedId}`);
+    })
+);
 
 module.exports = router;
