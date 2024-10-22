@@ -13,14 +13,7 @@ description:{
 
     image:{
         filename:String,
-         url:String
-       
-        // type: String,
-        // default: "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg",
-        // set: (v) => 
-        //     v==="" 
-        // ? "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg" 
-        // : v,
+         url:String,
     },
 
     price:{

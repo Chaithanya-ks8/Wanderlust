@@ -7,13 +7,21 @@ const {isloggedIn, isOwner, validateListing} = require("../middleware.js");
 
 const listingController = require("../controllers/listings.js");
 
+const multer = require("multer");
+const {storage} = require("../cloudConfig.js");
+const upload = multer({storage});
+
+
+
 
 // "/" Route:-
 router.route("/")
 //Index Route
 .get( wrapAsync(listingController.index))
  //Create Route
-.post( isloggedIn, 
+.post( 
+   isloggedIn, 
+    upload.single("listing[image]"),
     validateListing,
      wrapAsync(listingController.createListing));
 
@@ -29,6 +37,7 @@ router.route("/")
 //  Update Route
     .put(isloggedIn, 
          isOwner,
+         upload.single("listing[image]"),
    validateListing, 
     wrapAsync(listingController.updateListing))
  //Delete Route
