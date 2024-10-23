@@ -1,4 +1,7 @@
 const Listing = require("../models/listing");
+const mbxGeoCoding = require('@mapbox/mapbox-sdk/services/tilesets');
+const mapToken = process.env.MAP_TOKEN;
+const geocodingClient = mbxGeoCoding({ accessToken: mapToken });
 
 module.exports.index = async (req, res) => {
     const all_listings = await Listing.find({});
@@ -27,6 +30,15 @@ module.exports.index = async (req, res) => {
         };
 
         module.exports.createListing = async(req,res,next) => {
+        let response = await geocodingClient.forwardGeocode({
+                query: req.body.listing.location, //"Karnataka, India"
+                limit: 1,
+              })
+                .send();
+
+                console.log(response.body.features[0].geometry);
+                res.send("done");
+                
             // let{title, description, image, price, country, location} = req.body;
             let url = req.file.path;
             let filename = req.file.filename;
