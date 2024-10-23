@@ -1,5 +1,5 @@
 const Listing = require("../models/listing");
-const mbxGeoCoding = require('@mapbox/mapbox-sdk/services/tilesets');
+const mbxGeoCoding = require('@mapbox/mapbox-sdk/services/geocoding');
 const mapToken = process.env.MAP_TOKEN;
 const geocodingClient = mbxGeoCoding({ accessToken: mapToken });
 
@@ -35,9 +35,6 @@ module.exports.index = async (req, res) => {
                 limit: 1,
               })
                 .send();
-
-                console.log(response.body.features[0].geometry);
-                res.send("done");
                 
             // let{title, description, image, price, country, location} = req.body;
             let url = req.file.path;
@@ -46,7 +43,12 @@ module.exports.index = async (req, res) => {
                const new_listing = new Listing(listing);
                new_listing.owner = req.user._id;
                new_listing.image = {url, filename};
-               await new_listing.save();
+
+               new_listing.geometry = response.body.features[0].geometry;
+
+              let savedListing =  await new_listing.save();
+              console.log(savedListing);
+
                req.flash("success", "New Listing Created!");
                res.redirect("/listings");
             };

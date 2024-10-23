@@ -8,3 +8,9 @@ container: "map", // container ID
  center: [75.7139, 15.3173], // starting position [lng, lat]
 zoom: 9,// starting zoom
     });
+
+console.log(coordinates);
+
+    const marker = new mapboxgl.Marker()
+    .setLngLat([coordinates]) //Listing.geometry.coordinates
+    .addTo(map);
