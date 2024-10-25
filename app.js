@@ -53,9 +53,9 @@ httpOnly: true
     },
 };
 
-app.get("/", (req,res) => {
-    res.send("I am route");
-    });
+// app.get("/", (req,res) => {
+//     res.send("I am route");
+//     });
 
 app.use(session(sessionOptions));
 app.use(flash());

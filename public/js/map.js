@@ -5,11 +5,15 @@
 container: "map", // container ID
 // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
  style: "mapbox://styles/mapbox/streets-v12", // style URL
- center: coordinates, // starting position [lng, lat]
-zoom: 9,// starting zoom
+ center: listing.geometry.coordinates, // starting position [lng, lat]
+zoom: 8,// starting zoom
     });
 
 
-    const marker = new mapboxgl.Marker()
-    .setLngLat(coordinates) //Listing.geometry.coordinates
+    const marker = new mapboxgl.Marker({color: "red"})
+    .setLngLat(listing.geometry.coordinates) //Listing.geometry.coordinates
+    .setPopup(new mapboxgl.Popup({offset: 25}).setHTML(
+       ` <h3>${listing.title}</h3> <p> Exact location will be provided after booking! </p>`
+        )
+    )
     .addTo(map);
